@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态二维码生成器</title>
+  
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        function getNowTime() {
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+            return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function decryptContent(encrypted, key) {
+            let bytes = CryptoJS.AES.decrypt(encrypted, CryptoJS.enc.Utf8.parse(key), {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return bytes.toString(CryptoJS.enc.Utf8).split(",");
+        }
+
+        function Encrypt(content, key) {
+            var srcs = CryptoJS.enc.Utf8.parse(JSON.stringify(content));
+            var keys = CryptoJS.enc.Utf8.parse(key);
+            var encrypted = CryptoJS.AES.encrypt(srcs, keys, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted.toString();
+        }
+
+        function updateQRCode() {
+            const input = document.getElementById("encryptedInput").value;
+            if (!input) return;
+
+            try {
+                if (input.length <= 32) throw new Error("Invalid input.");
+                const key = input.slice(-32);
+                const content = input.slice(42, -32);
+                let contentArray = decryptContent(content, key);
+                contentArray[2] = getNowTime();
+                let updatedEncrypted = Encrypt(contentArray.toString(), key) + key;
+
+                const qrCodeElement = document.getElementById("qrcode");
+                qrCodeElement.innerHTML = "";
+                new QRCode(qrCodeElement, {
+                    text: 'https://ygj.gduf.edu.cn/index.aspx?qrcode=' + updatedEncrypted,
+                    width: 260,
+                    height: 260
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function startQRCodeUpdate() {
+            updateQRCode();
+            setInterval(updateQRCode, 3000);
+        }
+    </script>
+</head>
+
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">动态二维码生成器</h1>
+
+        <div class="card shadow p-4">
+            <div class="mb-3">
+                <label for="encryptedInput" class="form-label">把签到的二维码截图读出来的字符串放这里，点击生成后用易班扫码</label>
+                <textarea id="encryptedInput" class="form-control" rows="5" placeholder="开头是https://ygj.gduf.edu.cn/index.aspx?qrcode=的字符串"></textarea>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" onclick="startQRCodeUpdate()">开始生成动态二维码</button>
+            </div>
+        </div>
+
+        <div id="qrcode" class="d-flex justify-content-center align-items-center mt-4"></div>
+    </div>
+</body>
+
+</html>
