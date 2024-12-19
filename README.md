@@ -5,7 +5,7 @@
 
 可使用bark推送结果
 
-抓包方法可以在[EastItem/auto-daka](https://github.com/EastItem/auto-daka)和[liangzejun123/GDUF_autocheck](https://github.com/liangzejun123/GDUF_autocheck)获得
+抓包方法可以在[EastItem/auto-daka](https://github.com/EastItem/auto-daka)和[bur9er/GDUF_autocheck](https://github.com/bur9er/GDUF_autocheck)（后者已删库跑路，阿门🙇‍）获得
 
 本项目代码也抄袭自上面两个项目，只是略加修改让代码能正常使用
 
@@ -15,6 +15,14 @@
 
 ### 更新考勤签到网页：
 
-需要用易班扫描本项目的二维码进入网页，扫描过期二维码完成考勤签到
+需要用易班识别路径为img/checkin.png的二维码进入网页后，扫描过期二维码的截图完成考勤签到
 
-本项目为GPT写成，本人代码能力接近为0，需要更多测试并回馈
+新增部分为GPT写成，本人代码能力接近为0，需要更多测试并回馈
+
+## 241219更新：
+
+### 声明：
+
+本项目虽然抄袭自MIT协议的代码，但新增代码改为GPL协议
+
+运行本项目代码产生的**一切后果由代码使用者承担**，且**禁止用于盈利**。
