@@ -74,9 +74,8 @@
                 const key = input.slice(-32);
                 const content = input.slice(42, -32);
                 let contentArray = decryptContent(content, key);
-                contentArray[2] = getNowTime();
+                contentArray[1] = getNowTime();
                 let updatedEncrypted = Encrypt(contentArray.toString(), key) + key;
-                alert(contentArray.toString()); // Display decrypted content for verification
                 window.location.href = 'https://ygj.gduf.edu.cn/index.aspx?qrcode=' + updatedEncrypted;
             } catch (error) {
                 console.error(error); // Log error for debugging
